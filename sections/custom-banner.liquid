@@ -1,0 +1,314 @@
+{% liquid
+	assign top_logo = section.settings.top_logo
+	assign top_text = section.settings.top_text
+	assign top_cta_text = section.settings.top_cta_text
+	assign top_cta_link = section.settings.top_cta_link
+	assign background_image = section.settings.background_image
+	assign heading = section.settings.heading
+	assign body_text = section.settings.body_text
+	assign main_cta_text = section.settings.main_cta_text
+	assign main_cta_link = section.settings.main_cta_link
+	assign bottom_text = section.settings.bottom_text
+%}
+
+<section
+	class="custom-banner section-{{ section.id }}"
+	{% if background_image != blank %}
+		style="--custom-banner-background-image: url('{{ background_image | image_url: width: 2400 }}');"
+	{% endif %}
+>
+	<div class="custom-banner__surface">
+		<div class="custom-banner__top-bar">
+			<div class="custom-banner__top-logo">
+				{% if top_logo != blank %}
+					{{
+						top_logo
+						| image_url: width: 320
+						| image_tag:
+							class: 'custom-banner__logo-image',
+							loading: 'lazy',
+							widths: '120, 160, 240, 320',
+							alt: top_logo.alt | default: shop.name | escape
+					}}
+				{% else %}
+					<span class="custom-banner__logo-placeholder">{{ shop.name }}</span>
+				{% endif %}
+			</div>
+
+			{% if top_text != blank %}
+				<p class="custom-banner__top-text">{{ top_text }}</p>
+			{% else %}
+				<div></div>
+			{% endif %}
+
+			{% if top_cta_text != blank %}
+				<a
+					class="custom-banner__top-cta"
+					{% if top_cta_link != blank %}
+						href="{{ top_cta_link }}"
+					{% else %}
+						role="link"
+						aria-disabled="true"
+					{% endif %}
+				>
+					{{ top_cta_text }}
+				</a>
+			{% else %}
+				<div></div>
+			{% endif %}
+		</div>
+
+		<div class="custom-banner__hero">
+			<div class="custom-banner__content">
+				{% if heading != blank %}
+					<h2 class="custom-banner__heading">{{ heading }}</h2>
+				{% endif %}
+
+				{% if body_text != blank %}
+					<p class="custom-banner__body">{{ body_text }}</p>
+				{% endif %}
+
+				{% if main_cta_text != blank %}
+					<a
+						class="custom-banner__main-cta"
+						{% if main_cta_link != blank %}
+							href="{{ main_cta_link }}"
+						{% else %}
+							role="link"
+							aria-disabled="true"
+						{% endif %}
+					>
+						{{ main_cta_text }}
+					</a>
+				{% endif %}
+			</div>
+		</div>
+
+		{% if bottom_text != blank %}
+			<div class="custom-banner__bottom-bar">
+				<p class="custom-banner__bottom-text">{{ bottom_text }}</p>
+			</div>
+		{% endif %}
+	</div>
+</section>
+
+{% stylesheet %}
+	.custom-banner {
+		padding-block: var(--padding-xl);
+	}
+
+	.custom-banner__surface {
+		width: min(100% - 3rem, 1400px);
+		margin-inline: auto;
+		background-color: #f1f1f1;
+		background-image: linear-gradient(rgba(0, 0, 0, 0.16), rgba(0, 0, 0, 0.16)), var(--custom-banner-background-image);
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: cover;
+		display: grid;
+		min-height: 640px;
+		overflow: hidden;
+	}
+
+	.custom-banner__top-bar,
+	.custom-banner__bottom-bar {
+		background: #d9d9d9;
+		padding: 1rem 1.5rem;
+	}
+
+	.custom-banner__top-bar {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+		align-items: center;
+		gap: 1rem;
+	}
+
+	.custom-banner__top-logo {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		min-width: 0;
+	}
+
+	.custom-banner__logo-image {
+		display: block;
+		width: auto;
+		height: auto;
+		max-width: min(180px, 100%);
+	}
+
+	.custom-banner__logo-placeholder {
+		font-size: 1rem;
+		font-weight: 600;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+	}
+
+	.custom-banner__top-text,
+	.custom-banner__bottom-text {
+		margin: 0;
+		font-size: 0.9rem;
+		line-height: 1.4;
+		text-align: center;
+	}
+
+	.custom-banner__top-cta,
+	.custom-banner__main-cta {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0.95rem 1.6rem;
+		text-decoration: none;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		font-size: 0.85rem;
+		font-weight: 700;
+		border-radius: 0;
+		min-height: 52px;
+	}
+
+	.custom-banner__top-cta {
+		justify-self: end;
+		background: #f4db3f;
+		color: #000000;
+	}
+
+	.custom-banner__main-cta {
+		background: #000000;
+		color: #ffffff;
+	}
+
+	.custom-banner__hero {
+		display: grid;
+		align-items: center;
+		padding: clamp(3rem, 6vw, 6rem) 1.5rem;
+		flex: 1 1 auto;
+	}
+
+	.custom-banner__content {
+		max-width: 38rem;
+		padding: clamp(1.5rem, 3vw, 2.5rem);
+		background: rgba(255, 255, 255, 0.72);
+		backdrop-filter: blur(6px);
+		display: grid;
+		gap: 1rem;
+	}
+
+	.custom-banner__heading {
+		margin: 0;
+		font-size: clamp(2rem, 4vw, 4rem);
+		line-height: 1;
+	}
+
+	.custom-banner__body {
+		margin: 0;
+		font-size: 1rem;
+		line-height: 1.65;
+		max-width: 34rem;
+	}
+
+	.custom-banner__bottom-bar {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	@media screen and (max-width: 749px) {
+		.custom-banner__surface {
+			width: calc(100% - 2rem);
+			min-height: 560px;
+		}
+
+		.custom-banner__top-bar {
+			grid-template-columns: 1fr;
+			justify-items: center;
+		}
+
+		.custom-banner__top-logo {
+			justify-content: center;
+		}
+
+		.custom-banner__top-cta {
+			justify-self: center;
+		}
+
+		.custom-banner__hero {
+			padding: 2.5rem 1rem;
+		}
+
+		.custom-banner__content {
+			max-width: 100%;
+		}
+	}
+{% endstylesheet %}
+
+{% schema %}
+{
+	"name": "Custom banner",
+	"tag": "section",
+	"class": "section",
+	"settings": [
+		{
+			"type": "image_picker",
+			"id": "background_image",
+			"label": "Background image"
+		},
+		{
+			"type": "image_picker",
+			"id": "top_logo",
+			"label": "Top logo"
+		},
+		{
+			"type": "text",
+			"id": "top_text",
+			"label": "Top bar text",
+			"default": "Free shipping on selected orders"
+		},
+		{
+			"type": "text",
+			"id": "top_cta_text",
+			"label": "Top CTA text",
+			"default": "Shop now"
+		},
+		{
+			"type": "url",
+			"id": "top_cta_link",
+			"label": "Top CTA link"
+		},
+		{
+			"type": "text",
+			"id": "heading",
+			"label": "Heading",
+			"default": "Build a strong first impression"
+		},
+		{
+			"type": "textarea",
+			"id": "body_text",
+			"label": "Body text",
+			"default": "Use this banner to highlight a collection, launch, or promotion with a strong visual background and direct call to action."
+		},
+		{
+			"type": "text",
+			"id": "main_cta_text",
+			"label": "Main CTA text",
+			"default": "Explore collection"
+		},
+		{
+			"type": "url",
+			"id": "main_cta_link",
+			"label": "Main CTA link"
+		},
+		{
+			"type": "text",
+			"id": "bottom_text",
+			"label": "Bottom bar text",
+			"default": "Designed for quick promotional messaging"
+		}
+	],
+	"presets": [
+		{
+			"name": "Custom banner"
+		}
+	]
+}
+{% endschema %}
