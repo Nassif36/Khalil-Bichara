@@ -21,7 +21,11 @@ export class QuickAddComponent extends Component {
     );
     const productLink = productCard?.getProductCardLink() || hotspotProduct?.getHotspotProductLink();
 
-    if (!productLink?.href) return '';
+    if (!productLink?.href) {
+      const fallbackUrl = this.dataset.productUrl;
+      if (!fallbackUrl) return '';
+      return new URL(fallbackUrl, window.location.origin).toString();
+    }
 
     const url = new URL(productLink.href);
 

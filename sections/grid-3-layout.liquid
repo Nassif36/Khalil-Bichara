@@ -43,32 +43,32 @@
 							</div>
 						</a>
 
-						<div class="grid-3-layout__content">
-							<div class="grid-3-layout__copy">
-								<p class="grid-3-layout__vendor">{{ product.vendor }}</p>
-								<h3 class="grid-3-layout__title">
-									<a href="{{ product.url }}">{{ product.title }}</a>
-								</h3>
-								<div class="grid-3-layout__price">
-									  {% render 'price', product_resource: product, show_unit_price: true %}
-								</div>
-							</div>
-
-							<div class="grid-3-layout__actions">
-								{% render 'quick-add', product: product, section_id: section.id, block: block %}
-
-								{% if variant != blank and variant.available == false %}
-									<p class="grid-3-layout__status">{{ 'products.product.sold_out' | t }}</p>
-								{% endif %}
-							</div>
+						<div class="grid-3-layout__actions">
+							<quick-add-component
+								class="grid-3-layout__quick-add"
+								data-product-title="{{ product.title }}"
+								data-quick-add-button="choose"
+								data-product-options-count="{{ product.options.size }}"
+								data-product-url="{{ product.url }}"
+							>
+								<button
+									class="grid-3-layout__quick-add-button"
+									type="button"
+									name="add"
+									on:click="quick-add-component/handleClick"
+									aria-label="{{ 'actions.choose' | t }} {{ product.title | escape }}"
+									{% if variant != blank and variant.available == false %}
+										disabled
+										aria-disabled="true"
+									{% endif %}
+								>
+									+
+								</button>
+							</quick-add-component>
 						</div>
 					{% else %}
 						<div class="grid-3-layout__media grid-3-layout__media--placeholder">
 							{{ 'product-1' | placeholder_svg_tag: 'grid-3-layout__image grid-3-layout__image--placeholder' }}
-						</div>
-						<div class="grid-3-layout__content">
-							  <h3 class="grid-3-layout__title">Product title</h3>
-							  <p class="grid-3-layout__status">Select a product for this block.</p>
 						</div>
 					{% endif %}
 				</article>
@@ -83,7 +83,6 @@
 	}
 
 	.grid-3-layout__inner {
-		width: min(100% - 3rem, var(--page-width, 1400px));
 		margin-inline: auto;
 		display: grid;
 		gap: var(--padding-lg);
@@ -107,13 +106,13 @@
 	}
 
 	.grid-3-layout__item {
-		display: grid;
-		grid-template-rows: auto 1fr;
+		position: relative;
 		min-width: 0;
 		background: rgb(var(--color-background));
 		border: 1px solid rgba(var(--color-foreground-rgb), 0.08);
 		border-radius: var(--style-border-radius-inputs);
 		overflow: clip;
+		max-height: 400px;
 	}
 
 	.grid-3-layout__media-link {
@@ -138,64 +137,45 @@
 		background: rgba(var(--color-foreground-rgb), 0.04);
 	}
 
-	.grid-3-layout__content {
-		display: grid;
-		align-content: space-between;
-		gap: var(--padding-md);
-		padding: var(--padding-md);
-	}
-
-	.grid-3-layout__copy {
-		display: grid;
-		gap: 0.5rem;
-	}
-
-	.grid-3-layout__vendor {
-		margin: 0;
-		opacity: 0.65;
-		text-transform: uppercase;
-		letter-spacing: 0.08em;
-		font-size: 0.75rem;
-	}
-
-	.grid-3-layout__title {
-		margin: 0;
-		font: inherit;
-		font-size: clamp(1rem, 0.9rem + 0.2vw, 1.125rem);
-	}
-
-	.grid-3-layout__title a {
-		color: inherit;
-		text-decoration: none;
-	}
-
-	.grid-3-layout__price {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.4rem;
-		align-items: baseline;
-	}
-
 	.grid-3-layout__actions {
-		display: grid;
-		gap: 0.5rem;
+		position: absolute;
+		right: 0.75rem;
+		bottom: 0.75rem;
+		z-index: 2;
 	}
 
-	.grid-3-layout__actions .quick-add,
-	.grid-3-layout__actions .quick-add__product-form-component,
-	.grid-3-layout__actions .shopify-product-form {
-		width: 100%;
+	.grid-3-layout__quick-add {
+		display: block;
 	}
 
-	.grid-3-layout__actions .quick-add__button {
-		width: 100%;
+	.grid-3-layout__quick-add-button {
+		display: inline-flex;
+		align-items: center;
 		justify-content: center;
+		width: 2.25rem;
+		height: 2.25rem;
+		border: 0;
+		border-radius: 999px;
+		background: #ffffff;
+		color: #000000;
+		font-size: 1.75rem;
+		line-height: 1;
+		cursor: pointer;
+		box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+		transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
 	}
 
-	.grid-3-layout__status {
-		margin: 0;
-		opacity: 0.7;
-		font-size: 0.875rem;
+	.grid-3-layout__quick-add-button:hover,
+	.grid-3-layout__quick-add-button:focus-visible {
+		background: #f4db3f;
+		color: #000000;
+		transform: translateY(-1px);
+	}
+
+	.grid-3-layout__quick-add-button:disabled {
+		opacity: 0.55;
+		cursor: not-allowed;
+		transform: none;
 	}
 
 	@media screen and (min-width: 990px) {

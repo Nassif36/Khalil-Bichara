@@ -11,8 +11,8 @@
 	assign bottom_text = section.settings.bottom_text
 %}
 
-<section
-	class="custom-banner section-{{ section.id }}"
+<div
+	class="custom-banner"
 	{% if background_image != blank %}
 		style="--custom-banner-background-image: url('{{ background_image | image_url: width: 2400 }}');"
 	{% endif %}
@@ -51,7 +51,8 @@
 						aria-disabled="true"
 					{% endif %}
 				>
-					{{ top_cta_text }}
+					<span class="custom-banner__cta-label">{{ top_cta_text }}</span>
+					<span class="custom-banner__cta-icon" aria-hidden="true">{{- 'icon-arrow.svg' | inline_asset_content -}}</span>
 				</a>
 			{% else %}
 				<div></div>
@@ -78,11 +79,29 @@
 							aria-disabled="true"
 						{% endif %}
 					>
-						{{ main_cta_text }}
+								<span class="custom-banner__cta-label">{{ main_cta_text }}</span>
+							<span class="custom-banner__cta-icon" aria-hidden="true">{{- 'icon-arrow.svg' | inline_asset_content -}}</span>
 					</a>
 				{% endif %}
 			</div>
 		</div>
+
+		{% if main_cta_text != blank %}
+			<div class="custom-banner__mobile-cta-wrap">
+				<a
+					class="custom-banner__main-cta custom-banner__main-cta--mobile"
+					{% if main_cta_link != blank %}
+						href="{{ main_cta_link }}"
+					{% else %}
+						role="link"
+						aria-disabled="true"
+					{% endif %}
+				>
+					<span class="custom-banner__cta-label">{{ main_cta_text }}</span>
+					<span class="custom-banner__cta-icon" aria-hidden="true">{{- 'icon-arrow.svg' | inline_asset_content -}}</span>
+				</a>
+			</div>
+		{% endif %}
 
 		{% if bottom_text != blank %}
 			<div class="custom-banner__bottom-bar">
@@ -90,24 +109,16 @@
 			</div>
 		{% endif %}
 	</div>
-</section>
+</div>
 
 {% stylesheet %}
-	.custom-banner {
-		padding-block: var(--padding-xl);
-	}
 
 	.custom-banner__surface {
-		width: min(100% - 3rem, 1400px);
-		margin-inline: auto;
 		background-color: #f1f1f1;
 		background-image: linear-gradient(rgba(0, 0, 0, 0.16), rgba(0, 0, 0, 0.16)), var(--custom-banner-background-image);
 		background-position: center;
 		background-repeat: no-repeat;
 		background-size: cover;
-		display: grid;
-		min-height: 640px;
-		overflow: hidden;
 	}
 
 	.custom-banner__top-bar,
@@ -157,6 +168,10 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
+		gap: 0.6rem;
+		position: relative;
+		overflow: hidden;
+		isolation: isolate;
 		padding: 0.95rem 1.6rem;
 		text-decoration: none;
 		text-transform: uppercase;
@@ -165,6 +180,26 @@
 		font-weight: 700;
 		border-radius: 0;
 		min-height: 52px;
+		max-width: 205px;
+		width: 100%;
+		transition: color 0.35s ease;
+	}
+
+	.custom-banner__top-cta::before,
+	.custom-banner__main-cta::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		transform: scaleX(0);
+		transform-origin: left;
+		transition: transform 0.35s ease;
+		z-index: 0;
+	}
+
+	.custom-banner__cta-label,
+	.custom-banner__cta-icon {
+		position: relative;
+		z-index: 1;
 	}
 
 	.custom-banner__top-cta {
@@ -173,22 +208,73 @@
 		color: #000000;
 	}
 
+	.custom-banner__top-cta::before {
+		background: #000000;
+	}
+
 	.custom-banner__main-cta {
 		background: #000000;
 		color: #ffffff;
+		position: relative;
+	}
+
+	.custom-banner__main-cta::before {
+		background: #f4db3f;
+	}
+
+	.custom-banner__top-cta:hover,
+	.custom-banner__top-cta:focus-visible  {
+		color: #ffffff;
+	}
+
+	.custom-banner__main-cta:hover,
+	.custom-banner__main-cta:focus-visible {
+		color: #000000;
+	}
+
+	.custom-banner__top-cta:hover::before,
+	.custom-banner__top-cta:focus-visible::before,
+	.custom-banner__main-cta:hover::before,
+	.custom-banner__main-cta:focus-visible::before {
+		transform: scaleX(1);
+	}
+
+	.custom-banner__cta-icon {
+		display: inline-flex;
+		width: 1.8rem;
+		line-height: 0;
+		flex-shrink: 0;
+		color: currentColor;
+		transition: opacity 0.2s ease;
+		position: absolute;
+    bottom: 4%;
+    right: 7%;
+    top: 0;
+	}
+
+	.custom-banner__top-cta:hover .custom-banner__cta-icon,
+	.custom-banner__top-cta:focus-visible .custom-banner__cta-icon,
+	.custom-banner__main-cta:hover .custom-banner__cta-icon,
+	.custom-banner__main-cta:focus-visible .custom-banner__cta-icon {
+		opacity: 0;
+	}
+
+	.custom-banner__cta-icon svg {
+		display: block;
+		width: 100%;
+		height: 100%;
 	}
 
 	.custom-banner__hero {
 		display: grid;
-		align-items: center;
-		padding: clamp(3rem, 6vw, 6rem) 1.5rem;
-		flex: 1 1 auto;
+		align-items: flex-end;
+		min-height: 90vh;
 	}
 
 	.custom-banner__content {
 		max-width: 38rem;
 		padding: clamp(1.5rem, 3vw, 2.5rem);
-		background: rgba(255, 255, 255, 0.72);
+		background: rgba(255, 255, 255, 0.97);
 		backdrop-filter: blur(6px);
 		display: grid;
 		gap: 1rem;
@@ -213,32 +299,55 @@
 		justify-content: center;
 	}
 
-	@media screen and (max-width: 749px) {
-		.custom-banner__surface {
-			width: calc(100% - 2rem);
-			min-height: 560px;
-		}
+	.custom-banner__mobile-cta-wrap {
+		display: none;
+	}
+
+
+	
+
+	@media screen and (max-width: 768px) {
 
 		.custom-banner__top-bar {
-			grid-template-columns: 1fr;
-			justify-items: center;
-		}
-
-		.custom-banner__top-logo {
-			justify-content: center;
-		}
-
-		.custom-banner__top-cta {
-			justify-self: center;
-		}
-
-		.custom-banner__hero {
-			padding: 2.5rem 1rem;
+			display: none;
 		}
 
 		.custom-banner__content {
-			max-width: 100%;
+			background: transparent;
+			backdrop-filter: none;
+			height: 100%;
+			grid-template-rows: auto auto 50%;
+			place-content: center;
+			text-align: center;
+			padding: 0;
+			gap: 0;
 		}
+
+		.custom-banner__heading ,
+		.custom-banner__body {
+			background: #ffffff;
+			padding: 1em;
+		}
+		.custom-banner__main-cta {
+			max-height: max-content;
+			margin: auto;
+		}
+
+		.custom-banner__content .custom-banner__main-cta {
+			display: none;
+		}
+
+		.custom-banner__mobile-cta-wrap {
+			display: flex;
+			justify-content: center;
+			padding: 1rem 1rem 1.5rem;
+		}
+
+		.custom-banner__main-cta--mobile {
+			max-width: min(100%, 22rem);
+			margin: 0;
+		}
+
 	}
 {% endstylesheet %}
 
@@ -246,7 +355,7 @@
 {
 	"name": "Custom banner",
 	"tag": "section",
-	"class": "section",
+	"class": "custom-banner-section",
 	"settings": [
 		{
 			"type": "image_picker",
